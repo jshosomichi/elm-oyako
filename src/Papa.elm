@@ -13,7 +13,7 @@ type Msg
 
 
 type alias Model =
-    { isGood : Bool, sonDict : Dict Son.Id Son.Model }
+    { sonDict : Dict Son.Id Son.Model }
 
 
 isGood : Dict Son.Id Son.Model -> Bool
@@ -36,9 +36,7 @@ initModel =
                 |> List.map (\son -> ( son.id, son ))
                 |> Dict.fromList
     in
-        { isGood = isGood sonDict
-        , sonDict = sonDict
-        }
+        { sonDict = sonDict }
 
 
 targetSon : Son.Id -> Dict Son.Id Son.Model -> Son.Model
@@ -59,11 +57,8 @@ update id msg model =
 
                 newSonDict =
                     Dict.insert id sonModel model.sonDict
-
-                newIsGood =
-                    isGood newSonDict
             in
-                { model | isGood = newIsGood, sonDict = newSonDict } ! []
+                { model | sonDict = newSonDict } ! []
 
         SonMsgWrap sonMsg ->
             model ! []
@@ -88,7 +83,7 @@ view id model =
                 |> List.map (\son -> Html.map SonMsgWrap <| Son.view id son)
 
         papaImgSrc =
-            if model.isGood then
+            if isGood model.sonDict then
                 "../img/papa-good.png"
             else
                 "../img/papa-bad.png"
