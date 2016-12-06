@@ -3,13 +3,11 @@ module Papa exposing (..)
 import Dict exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Keyboard
 import Son
 
 
 type Msg
     = SonMsgWrap Son.Msg
-    | KeyDown Keyboard.KeyCode
 
 
 type alias Model =
@@ -39,29 +37,9 @@ initModel =
         { sonDict = sonDict }
 
 
-targetSon : Son.Id -> Dict Son.Id Son.Model -> Son.Model
-targetSon id sonDict =
-    sonDict
-        |> Dict.get id
-        |> Maybe.withDefault Son.dummySon
-
-
-update : Son.Id -> Msg -> Model -> ( Model, Cmd Msg )
-update id msg model =
-    case msg of
-        KeyDown code ->
-            let
-                ( sonModel, _ ) =
-                    targetSon id model.sonDict
-                        |> Son.update (Son.KeyDown code)
-
-                newSonDict =
-                    Dict.insert id sonModel model.sonDict
-            in
-                { model | sonDict = newSonDict } ! []
-
-        SonMsgWrap sonMsg ->
-            model ! []
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    model ! []
 
 
 papaImg : List ( String, String )

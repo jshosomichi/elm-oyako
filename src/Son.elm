@@ -46,33 +46,6 @@ dummySon =
     initModel 0 "" Happy
 
 
-message : msg -> Cmd msg
-message x =
-    Task.perform identity (Task.succeed x)
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        KeyDown code ->
-            let
-                newFeeling =
-                    case code of
-                        38 ->
-                            backFeeling model.feeling
-
-                        40 ->
-                            forwardFeeling model.feeling
-
-                        _ ->
-                            model.feeling
-            in
-                { model | feeling = newFeeling } ! []
-
-        _ ->
-            model ! []
-
-
 backFeeling : Feeling -> Feeling
 backFeeling feeling =
     case feeling of
@@ -97,6 +70,33 @@ forwardFeeling feeling =
 
         Crying ->
             Happy
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        KeyDown code ->
+            let
+                newFeeling =
+                    case code of
+                        38 ->
+                            backFeeling model.feeling
+
+                        40 ->
+                            forwardFeeling model.feeling
+
+                        _ ->
+                            model.feeling
+            in
+                { model | feeling = newFeeling } ! []
+
+        _ ->
+            model ! []
+
+
+subscriptions : Sub Msg
+subscriptions =
+    Keyboard.downs KeyDown
 
 
 sonContainer : List ( String, String )

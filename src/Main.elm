@@ -1,15 +1,15 @@
 module Main exposing (..)
 
-import Dict
+import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Keyboard
 import Papa
 import Son
 
 
 type Msg
     = PapaMsgWrap Papa.Msg
+    | SonMsgWrap Son.Msg
 
 
 type alias Model =
@@ -23,18 +23,22 @@ init =
     { activeSonId = 1, papaModel = Papa.initModel } ! []
 
 
+targetSon : Son.Id -> Dict Son.Id Son.Model -> Son.Model
+targetSon id sonDict =
+    sonDict
+        |> Dict.get id
+        |> Maybe.withDefault Son.dummySon
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         PapaMsgWrap papaMsg ->
             let
                 ( papaModel, _ ) =
-                    Papa.update model.activeSonId papaMsg model.papaModel
+                    Papa.update papaMsg model.papaModel
             in
                 case papaMsg of
-                    Papa.KeyDown code ->
-                        { model | papaModel = papaModel } ! []
-
                     Papa.SonMsgWrap sonMsg ->
                         case sonMsg of
                             Son.ChangeActiveSon id ->
@@ -43,10 +47,23 @@ update msg model =
                             _ ->
                                 model ! []
 
+        SonMsgWrap sonMsg ->
+            let
+                ( sonModel, _ ) =
+                    Son.update sonMsg (targetSon model.activeSonId model.papaModel.sonDict)
+
+                papaModel =
+                    model.papaModel
+
+                newSonDict =
+                    Dict.insert model.activeSonId sonModel model.papaModel.sonDict
+            in
+                { model | papaModel = { papaModel | sonDict = newSonDict } } ! []
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.map PapaMsgWrap <| Keyboard.downs Papa.KeyDown
+    Sub.map SonMsgWrap Son.subscriptions
 
 
 view : Model -> Html Msg
