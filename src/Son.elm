@@ -87,10 +87,12 @@ update msg model =
 
                         _ ->
                             model.feeling
+
+
             in
                 { model | feeling = newFeeling } ! []
 
-        _ ->
+        ChangeActiveSon id ->
             model ! []
 
 

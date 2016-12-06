@@ -37,9 +37,31 @@ initModel =
         { sonDict = sonDict }
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    model ! []
+targetSon : Son.Id -> Dict Son.Id Son.Model -> Son.Model
+targetSon id sonDict =
+    sonDict
+        |> Dict.get id
+        |> Maybe.withDefault Son.dummySon
+
+
+update : Son.Id -> Msg -> Model -> ( Model, Cmd Msg )
+update sonId msg model =
+    case msg of
+        SonMsgWrap sonMsg ->
+            let
+                ( sonModel, _ ) =
+                    targetSon sonId model.sonDict
+                        |> Son.update sonMsg
+
+                newSonDict =
+                    Dict.insert sonId sonModel model.sonDict
+            in
+                { model | sonDict = newSonDict } ! []
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.map SonMsgWrap Son.subscriptions
 
 
 papaImg : List ( String, String )
