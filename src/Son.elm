@@ -122,8 +122,8 @@ sonNameColor =
     [ ( "color", "red" ) ]
 
 
-view : Id -> Model -> Html Msg
-view id model =
+view : (Int -> parentMsg) -> Id -> Model -> Html parentMsg
+view parentMsg activeSonId model =
     let
         sonImgSrc =
             case model.feeling of
@@ -137,14 +137,14 @@ view id model =
                     "../img/son-crying.png"
 
         sonNameColorStyle =
-            if id == model.id then
+            if activeSonId == model.id then
                 sonNameColor
             else
                 []
     in
         div
             [ style sonContainer
-            , onClick <| ChangeActiveSon model.id
+            , onClick <| parentMsg model.id
             ]
             [ img
                 [ style sonImg, src sonImgSrc ]

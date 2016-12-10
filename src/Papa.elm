@@ -70,14 +70,14 @@ papaImg =
     ]
 
 
-view : Son.Id -> Model -> Html Msg
-view id { sonDict } =
+view : (Int -> parentMsg) -> Son.Id -> Model -> Html parentMsg
+view parentMsg activeSonId { sonDict } =
     let
         sonViews =
             sonDict
                 |> Dict.toList
                 |> List.map (\( id, son ) -> son)
-                |> List.map (\son -> Html.map SonMsgWrap <| Son.view id son)
+                |> List.map (\son -> Son.view parentMsg activeSonId son)
 
         papaImgSrc =
             if isGood sonDict then

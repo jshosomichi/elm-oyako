@@ -9,6 +9,7 @@ import Son
 
 type Msg
     = PapaMsgWrap Papa.Msg
+    | ChangeActiveSonId Son.Id
 
 
 type alias Model =
@@ -30,12 +31,10 @@ update msg model =
                 ( newPapaModel, _ ) =
                     Papa.update model.activeSonId papaMsg model.papaModel
             in
-                case papaMsg of
-                    Papa.SonMsgWrap (Son.ChangeActiveSon id) ->
-                        { model | activeSonId = id } ! []
+                { model | papaModel = newPapaModel } ! []
 
-                    _ ->
-                        { model | papaModel = newPapaModel } ! []
+        ChangeActiveSonId id ->
+            { model | activeSonId = id } ! []
 
 
 subscriptions : Model -> Sub Msg
@@ -45,7 +44,7 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view { activeSonId, papaModel } =
-    div [] [ Html.map PapaMsgWrap <| Papa.view activeSonId papaModel ]
+    div [] [ Papa.view ChangeActiveSonId activeSonId papaModel ]
 
 
 main : Program Never Model Msg
