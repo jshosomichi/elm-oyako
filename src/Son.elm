@@ -8,8 +8,7 @@ import Task
 
 
 type Msg
-    = ChangeActiveSon Id
-    | KeyDown Keyboard.KeyCode
+    = KeyDown Keyboard.KeyCode
 
 
 type alias Id =
@@ -86,9 +85,6 @@ update msg model =
                             model.feeling
             in
                 { model | feeling = newFeeling } ! []
-
-        ChangeActiveSon id ->
-            model ! []
 
 
 subscriptions : Sub Msg
