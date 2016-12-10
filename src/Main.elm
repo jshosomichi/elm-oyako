@@ -39,13 +39,13 @@ update msg model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.map PapaMsgWrap <| Papa.subscriptions model.papaModel
+subscriptions _ =
+    Sub.map PapaMsgWrap <| Papa.subscriptions
 
 
 view : Model -> Html Msg
-view model =
-    div [] [ Html.map PapaMsgWrap <| Papa.view model.activeSonId model.papaModel ]
+view { activeSonId, papaModel } =
+    div [] [ Html.map PapaMsgWrap <| Papa.view activeSonId papaModel ]
 
 
 main : Program Never Model Msg

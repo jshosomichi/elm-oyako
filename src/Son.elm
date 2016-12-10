@@ -34,11 +34,8 @@ type alias Model =
 
 
 initModel : Id -> Name -> Feeling -> Model
-initModel id name feeling =
-    { id = id
-    , name = name
-    , feeling = feeling
-    }
+initModel =
+    Model
 
 
 dummySon : Model
@@ -87,8 +84,6 @@ update msg model =
 
                         _ ->
                             model.feeling
-
-
             in
                 { model | feeling = newFeeling } ! []
 

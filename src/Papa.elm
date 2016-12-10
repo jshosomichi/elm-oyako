@@ -15,11 +15,10 @@ type alias Model =
 
 
 isGood : Dict Son.Id Son.Model -> Bool
-isGood sons =
-    sons
-        |> Dict.toList
-        |> List.map (\( id, son ) -> son)
-        |> List.all (\son -> son.feeling == Son.Happy)
+isGood =
+    Dict.toList
+        >> List.map (\( id, son ) -> son)
+        >> List.all (\son -> son.feeling == Son.Happy)
 
 
 initModel =
@@ -38,10 +37,8 @@ initModel =
 
 
 targetSon : Son.Id -> Dict Son.Id Son.Model -> Son.Model
-targetSon id sonDict =
-    sonDict
-        |> Dict.get id
-        |> Maybe.withDefault Son.dummySon
+targetSon id =
+    Dict.get id >> Maybe.withDefault Son.dummySon
 
 
 update : Son.Id -> Msg -> Model -> ( Model, Cmd Msg )
@@ -59,8 +56,8 @@ update sonId msg model =
                 { model | sonDict = newSonDict } ! []
 
 
-subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions : Sub Msg
+subscriptions =
     Sub.map SonMsgWrap Son.subscriptions
 
 
@@ -74,16 +71,16 @@ papaImg =
 
 
 view : Son.Id -> Model -> Html Msg
-view id model =
+view id { sonDict } =
     let
         sonViews =
-            model.sonDict
+            sonDict
                 |> Dict.toList
                 |> List.map (\( id, son ) -> son)
                 |> List.map (\son -> Html.map SonMsgWrap <| Son.view id son)
 
         papaImgSrc =
-            if isGood model.sonDict then
+            if isGood sonDict then
                 "../img/papa-good.png"
             else
                 "../img/papa-bad.png"
