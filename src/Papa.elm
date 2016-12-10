@@ -70,7 +70,7 @@ papaImg =
     ]
 
 
-view : (Int -> highLevelMsg) -> Son.Id -> Model -> Html highLevelMsg
+view : (Son.Id -> highLevelMsg) -> Son.Id -> Model -> Html highLevelMsg
 view highLevelMsg activeSonId { sonDict } =
     let
         sonViews =

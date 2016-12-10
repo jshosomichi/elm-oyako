@@ -118,7 +118,7 @@ sonNameColor =
     [ ( "color", "red" ) ]
 
 
-view : (Int -> highLevelMsg) -> Id -> Model -> Html highLevelMsg
+view : (Id -> highLevelMsg) -> Id -> Model -> Html highLevelMsg
 view highLevelMsg activeSonId model =
     let
         sonImgSrc =
