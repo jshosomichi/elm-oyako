@@ -70,26 +70,19 @@ papaImg =
     ]
 
 
-view : (Int -> parentMsg) -> Son.Id -> Model -> Html parentMsg
-view parentMsg activeSonId { sonDict } =
+view : (Int -> highLevelMsg) -> Son.Id -> Model -> Html highLevelMsg
+view highLevelMsg activeSonId { sonDict } =
     let
         sonViews =
             sonDict
                 |> Dict.toList
                 |> List.map (\( id, son ) -> son)
-                |> List.map (\son -> Son.view parentMsg activeSonId son)
+                |> List.map (\son -> Son.view highLevelMsg activeSonId son)
 
         papaImgSrc =
-            if isGood sonDict then
-                "../img/papa-good.png"
-            else
-                "../img/papa-bad.png"
+            if isGood sonDict then "../img/papa-good.png" else "../img/papa-bad.png"
     in
         div []
-            [ img
-                [ style papaImg
-                , src papaImgSrc
-                ]
-                []
+            [ img [ style papaImg , src papaImgSrc ] []
             , div [] sonViews
             ]

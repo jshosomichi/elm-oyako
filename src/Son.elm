@@ -118,8 +118,8 @@ sonNameColor =
     [ ( "color", "red" ) ]
 
 
-view : (Int -> parentMsg) -> Id -> Model -> Html parentMsg
-view parentMsg activeSonId model =
+view : (Int -> highLevelMsg) -> Id -> Model -> Html highLevelMsg
+view highLevelMsg activeSonId model =
     let
         sonImgSrc =
             case model.feeling of
@@ -138,14 +138,7 @@ view parentMsg activeSonId model =
             else
                 []
     in
-        div
-            [ style sonContainer
-            , onClick <| parentMsg model.id
-            ]
-            [ img
-                [ style sonImg, src sonImgSrc ]
-                []
-            , div
-                [ style <| sonName ++ sonNameColorStyle ]
-                [ text model.name ]
+        div [ style sonContainer, onClick <| highLevelMsg model.id ]
+            [ img [ style sonImg, src sonImgSrc ] []
+            , div [ style <| sonName ++ sonNameColorStyle ] [ text model.name ]
             ]
