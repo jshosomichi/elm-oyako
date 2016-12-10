@@ -7,8 +7,10 @@ import Keyboard
 import Task
 
 
-type Msg
-    = KeyDown Keyboard.KeyCode
+type FeelingDirection
+    = Forward
+    | Backward
+    | None
 
 
 type alias Id =
@@ -68,77 +70,14 @@ forwardFeeling feeling =
             Happy
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        KeyDown code ->
-            let
-                newFeeling =
-                    case code of
-                        38 ->
-                            backFeeling model.feeling
+updateFeeling : FeelingDirection -> Model -> Model
+updateFeeling code model =
+    case code of
+        Forward ->
+            { model | feeling = forwardFeeling model.feeling }
 
-                        40 ->
-                            forwardFeeling model.feeling
+        Backward ->
+            { model | feeling = backFeeling model.feeling }
 
-                        _ ->
-                            model.feeling
-            in
-                { model | feeling = newFeeling } ! []
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Keyboard.downs KeyDown
-
-
-sonContainer : List ( String, String )
-sonContainer =
-    [ ( "margin-left", "20px" )
-    , ( "margin-top", "20px" )
-    , ( "float", "left" )
-    ]
-
-
-sonImg : List ( String, String )
-sonImg =
-    [ ( "width", "120px" )
-    , ( "height", "100px" )
-    ]
-
-
-sonName : List ( String, String )
-sonName =
-    [ ( "margin-left", "30px" )
-    ]
-
-
-sonNameColor : List ( String, String )
-sonNameColor =
-    [ ( "color", "red" ) ]
-
-
-view : (Int -> highLevelMsg) -> Id -> Model -> Html highLevelMsg
-view highLevelMsg activeSonId model =
-    let
-        sonImgSrc =
-            case model.feeling of
-                Happy ->
-                    "../img/son-happy.png"
-
-                Angry ->
-                    "../img/son-angry.png"
-
-                Crying ->
-                    "../img/son-crying.png"
-
-        sonNameColorStyle =
-            if activeSonId == model.id then
-                sonNameColor
-            else
-                []
-    in
-        div [ style sonContainer, onClick <| highLevelMsg model.id ]
-            [ img [ style sonImg, src sonImgSrc ] []
-            , div [ style <| sonName ++ sonNameColorStyle ] [ text model.name ]
-            ]
+        None ->
+            model

@@ -6,19 +6,8 @@ import Html.Attributes exposing (..)
 import Son
 
 
-type Msg
-    = SonMsgWrap Son.Msg
-
-
 type alias Model =
     { sonDict : Dict Son.Id Son.Model }
-
-
-isGood : Dict Son.Id Son.Model -> Bool
-isGood =
-    Dict.toList
-        >> List.map (\( id, son ) -> son)
-        >> List.all (\son -> son.feeling == Son.Happy)
 
 
 initModel =
@@ -36,53 +25,22 @@ initModel =
         { sonDict = sonDict }
 
 
-targetSon : Son.Id -> Dict Son.Id Son.Model -> Son.Model
-targetSon id =
-    Dict.get id >> Maybe.withDefault Son.dummySon
+isGood : Dict Son.Id Son.Model -> Bool
+isGood =
+    Dict.toList
+        >> List.map (\( id, son ) -> son)
+        >> List.all (\son -> son.feeling == Son.Happy)
 
 
-update : Son.Id -> Msg -> Model -> ( Model, Cmd Msg )
-update sonId msg model =
-    case msg of
-        SonMsgWrap sonMsg ->
-            let
-                ( sonModel, _ ) =
-                    targetSon sonId model.sonDict
-                        |> Son.update sonMsg
-
-                newSonDict =
-                    Dict.insert sonId sonModel model.sonDict
-            in
-                { model | sonDict = newSonDict } ! []
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.map SonMsgWrap Son.subscriptions
-
-
-papaImg : List ( String, String )
-papaImg =
-    [ ( "margin-top", "30px" )
-    , ( "margin-left", "50px" )
-    , ( "width", "180px" )
-    , ( "height", "150px" )
-    ]
-
-
-view : (Int -> highLevelMsg) -> Son.Id -> Model -> Html highLevelMsg
-view highLevelMsg activeSonId { sonDict } =
+updateSonsFeeling : Son.Id -> Son.FeelingDirection -> Model -> Model
+updateSonsFeeling id direction model =
     let
-        sonViews =
-            sonDict
-                |> Dict.toList
-                |> List.map (\( id, son ) -> son)
-                |> List.map (\son -> Son.view highLevelMsg activeSonId son)
+        newSon =
+            Dict.get id model.sonDict
+                |> Maybe.withDefault Son.dummySon
+                |> Son.updateFeeling direction
 
-        papaImgSrc =
-            if isGood sonDict then "../img/papa-good.png" else "../img/papa-bad.png"
+        newSonDict =
+            Dict.insert id newSon model.sonDict
     in
-        div []
-            [ img [ style papaImg , src papaImgSrc ] []
-            , div [] sonViews
-            ]
+        { model | sonDict = newSonDict }
