@@ -3,35 +3,8 @@ module Son exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Keyboard
-import Task
-
-
-type FeelingDirection
-    = Forward
-    | Backward
-    | None
-
-
-type alias Id =
-    Int
-
-
-type alias Name =
-    String
-
-
-type Feeling
-    = Happy
-    | Angry
-    | Crying
-
-
-type alias Model =
-    { id : Id
-    , name : Name
-    , feeling : Feeling
-    }
+import Msg exposing (Msg(..))
+import SonTypes exposing (..)
 
 
 initModel : Id -> Name -> Feeling -> Model
@@ -81,3 +54,55 @@ updateFeeling code model =
 
         None ->
             model
+
+
+sonContainer : List ( String, String )
+sonContainer =
+    [ ( "margin-left", "20px" )
+    , ( "margin-top", "20px" )
+    , ( "float", "left" )
+    ]
+
+
+sonImg : List ( String, String )
+sonImg =
+    [ ( "width", "120px" )
+    , ( "height", "100px" )
+    ]
+
+
+sonName : List ( String, String )
+sonName =
+    [ ( "margin-left", "30px" )
+    ]
+
+
+sonNameColor : List ( String, String )
+sonNameColor =
+    [ ( "color", "red" ) ]
+
+
+view : Id -> Model -> Html Msg
+view activeSonId model =
+    let
+        sonImgSrc =
+            case model.feeling of
+                Happy ->
+                    "../img/son-happy.png"
+
+                Angry ->
+                    "../img/son-angry.png"
+
+                Crying ->
+                    "../img/son-crying.png"
+
+        sonNameColorStyle =
+            if activeSonId == model.id then
+                sonNameColor
+            else
+                []
+    in
+        div [ style sonContainer, onClick <| ChangeActiveSonId model.id ]
+            [ img [ style sonImg, src sonImgSrc ] []
+            , div [ style <| sonName ++ sonNameColorStyle ] [ text model.name ]
+            ]
