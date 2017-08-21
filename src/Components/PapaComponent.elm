@@ -19,7 +19,8 @@ type alias Model =
 
 isGood : List SonComponent.Model -> Bool
 isGood =
-    List.all (\sonModel -> Son.isHappy <| sonModel.son)
+    List.map .son
+        >> List.all Son.isHappy
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
